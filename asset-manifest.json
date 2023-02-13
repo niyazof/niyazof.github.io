@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.cd785b13.chunk.css",
+    "main.js": "/static/js/main.e2753de4.chunk.js",
+    "runtime-main.js": "/static/js/runtime-main.f3d3a303.js",
+    "static/css/2.100b230f.chunk.css": "/static/css/2.100b230f.chunk.css",
+    "static/js/2.76a54bce.chunk.js": "/static/js/2.76a54bce.chunk.js",
+    "static/js/3.24c69828.chunk.js": "/static/js/3.24c69828.chunk.js",
+    "index.html": "/index.html",
+    "static/js/2.76a54bce.chunk.js.LICENSE.txt": "/static/js/2.76a54bce.chunk.js.LICENSE.txt",
+    "static/media/daily_food.d978d726.png": "/static/media/daily_food.d978d726.png",
+    "static/media/rq_timer.d29af419.png": "/static/media/rq_timer.d29af419.png",
+    "static/media/shipshape.f0586855.png": "/static/media/shipshape.f0586855.png",
+    "static/media/todo.fd83099e.png": "/static/media/todo.fd83099e.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f3d3a303.js",
+    "static/css/2.100b230f.chunk.css",
+    "static/js/2.76a54bce.chunk.js",
+    "static/css/main.cd785b13.chunk.css",
+    "static/js/main.e2753de4.chunk.js"
+  ]
+}
