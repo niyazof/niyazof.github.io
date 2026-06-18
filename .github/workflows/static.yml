@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build-and-deploy:
-    name: Find index.html and deploy to GitHub Pages
+    name: Deploy contents of static/ to GitHub Pages
     runs-on: ubuntu-latest
 
     steps:
@@ -23,39 +23,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Find directory that contains index.html
-        id: find_site
-        shell: bash
+      - name: Ensure static directory exists
         run: |
-          # Search tracked files for the first occurrence of index.html
-          site_dir=""
-          while IFS= read -r f; do
-            if [ "$(basename "$f")" = "index.html" ]; then
-              site_dir="$(dirname "$f")"
-              if [ "$site_dir" = "." ]; then
-                site_dir="."
-              fi
-              break
-            fi
-          done < <(git ls-files)
-
-          if [ -z "$site_dir" ]; then
-            echo "No index.html found in repository. Failing workflow." >&2
+          if [ ! -d static ]; then
+            echo "No static/ directory found in repository. Failing workflow." >&2
             exit 1
           fi
 
-          echo "Found index.html in: $site_dir"
-          echo "path=$site_dir" >> "$GITHUB_OUTPUT"
-
       - name: List files to be published (for debug)
         run: |
-          echo "Publishing contents of: ${{ steps.find_site.outputs.path }}"
-          ls -la "${{ steps.find_site.outputs.path }}"
+          echo "Publishing contents of: static/"
+          ls -la static
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ${{ steps.find_site.outputs.path }}
+          path: static
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
