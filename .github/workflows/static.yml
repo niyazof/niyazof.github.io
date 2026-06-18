@@ -1,43 +1,61 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches:
+      - main
+      - master
+  workflow_dispatch: {}
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-deploy:
+    name: Find index.html and deploy to GitHub Pages
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Check out repository
         uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          fetch-depth: 0
+
+      - name: Find directory that contains index.html
+        id: find_site
+        shell: bash
+        run: |
+          # Search tracked files for the first occurrence of index.html
+          site_dir=""
+          while IFS= read -r f; do
+            if [ "$(basename "$f")" = "index.html" ]; then
+              site_dir="$(dirname "$f")"
+              if [ "$site_dir" = "." ]; then
+                site_dir="."
+              fi
+              break
+            fi
+          done < <(git ls-files)
+
+          if [ -z "$site_dir" ]; then
+            echo "No index.html found in repository. Failing workflow." >&2
+            exit 1
+          fi
+
+          echo "Found index.html in: $site_dir"
+          echo "path=$site_dir" >> "$GITHUB_OUTPUT"
+
+      - name: List files to be published (for debug)
+        run: |
+          echo "Publishing contents of: ${{ steps.find_site.outputs.path }}"
+          ls -la "${{ steps.find_site.outputs.path }}"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ${{ steps.find_site.outputs.path }}
+
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v1
