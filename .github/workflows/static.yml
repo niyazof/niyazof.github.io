@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy contents of static/ to GitHub Pages
+    name: Build with Docker Compose and deploy to GitHub Pages
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -30,10 +30,23 @@ jobs:
 
       - name: Ensure static directory exists
         run: |
-          if [ ! -d static ]; then
-            echo "No static/ directory found in repository. Failing workflow." >&2
+          if [ ! -f static/docker-compose.yml ]; then
+            echo "No static/docker-compose.yml found in repository. Failing workflow." >&2
             exit 1
           fi
+
+      - name: Build site with Docker Compose
+        working-directory: static
+        run: docker compose build qa
+
+      - name: Extract built static files from container
+        working-directory: static
+        run: |
+          docker compose create qa
+          container_id="$(docker compose ps -a -q qa | head -n 1)"
+          mkdir -p ../pages-site
+          docker cp "${container_id}:/usr/share/nginx/html/." ../pages-site/
+          docker rm -f "${container_id}"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -41,7 +54,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: static
+          path: pages-site
 
       - name: Deploy to GitHub Pages
         id: deployment
