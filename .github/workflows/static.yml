@@ -53,7 +53,7 @@ jobs:
           ls -la "${{ steps.find_site.outputs.path }}"
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ${{ steps.find_site.outputs.path }}
 
