@@ -1,0 +1,7 @@
+services:
+  qa:
+    build:
+      context: .
+    ports:
+      - "8997:80"
+    restart: unless-stopped
