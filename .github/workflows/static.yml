@@ -28,13 +28,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Ensure static directory exists
-        run: |
-          if [ ! -d static ]; then
-            echo "No static/ directory found in repository. Failing workflow." >&2
-            exit 1
-          fi
-
       - name: Copy static site files
         run: |
           mkdir -p pages-site
