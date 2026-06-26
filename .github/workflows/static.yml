@@ -38,7 +38,7 @@ jobs:
       - name: Copy static site files
         run: |
           mkdir -p pages-site
-          cp -a static/. pages-site/
+          cp -a . pages-site/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
